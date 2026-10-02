@@ -4,8 +4,8 @@ figure4_final.py
 Final, cleaned-up Fig. 4 panels.  One script, twelve figures, the exact
 parameters agreed with Bitan and nothing else.
 
-    4(a)   alpha_a  from rho_a(E) ~ |E|^alpha       W = 0.60
-    4(b)   beta_a   from rho_a(0) ~ delta^beta      W_c1 = 0.60
+    4(a)   alpha_a  from rho_a(E) ~ |E|^alpha       W = 0.55
+    4(b)   beta_a   from rho_a(0) ~ delta^beta      W_c1 = 0.55
     4(b')  beta_t   from rho_t(0) ~ delta^beta      W_c1 = 0.40
     4(c)   beta_A   {10,3} Anderson                 W_c2 = 7.00
     4(d)   beta_A   {8,3}  Anderson                 W_c2 = 6.00
@@ -15,19 +15,16 @@ its linearized form, and the essential-singularity test with the critical
 point that form predicts.
 
 Conventions fixed here and not to be changed silently:
-  * offsets -- Anderson side B = 0 (rho_t is measured down to 1e-7..1e-8,
+  * offsets- Anderson side B = 0 (rho_t is measured down to 1e-7..1e-8,
     which bounds any constant floor far below anything a fit would want);
     DSM-metal side B is real KPM broadening and must be subtracted.
   * the linearized form is  Y = [(rho - B)/A]^(1/beta)  vs delta, which must
-    lie on Y = delta -- exponent 1/beta, and divided by A so that the
+    lie on Y = delta - exponent 1/beta, and divided by A so that the
     prediction has slope exactly 1 with no free parameters left.
   * the essential-singularity form is rho - B = A exp(-c delta^-alpha) with
     alpha = 1/2 held at the Bethe / mean-field value.
   * every fit line is drawn across the full axis range, never stopping
     short of the frame.
-
-Usage:
-    python figure4_final.py
 
 Requires KPM_analysis_manuscript.py and plot_utils.py alongside it.
 """
@@ -45,15 +42,6 @@ OUT_DIR = os.path.join(PLOT_BASE_TDOS, "figure4_final")
 
 # ===========================================================================
 # AXIS OVERRIDES -- the one place to adjust framing, one entry per figure.
-#
-# Each key is exactly the file name the figure is saved under.  Set
-#   xlim=(a, b)   -> x-axis runs a..b with ticks at  [a, (a+b)/2, b]
-#   ylim=(a, b)   -> same for y
-# Leave a value as None to keep the automatic limits for that axis.
-# Nothing else about the fit changes: the fit line and its uncertainty
-# bands are always redrawn across whatever range you set here, so they
-# never stop short of the frame.
-#
 # Example:
 #     'Fig4c_powerlaw': dict(xlim=(0.0, 0.45), ylim=(0.0, 0.032)),
 # ===========================================================================
@@ -97,9 +85,7 @@ BANDLINE = dict(ls='--', marker='', color='red', linewidth=1.0, alpha=0.6, zorde
 # ===========================================================================
 
 # --- 4(a): alpha from the energy-resolved ADOS ----------------------------
-# The energy grid must be the pi*a/N_m resolution grid, which
-# get_energy_resolved_data builds only when zoom_window is passed -- the dense
-# 101-point linspace oversamples below the KPM resolution and shifts alpha.
+# The energy grid must be the pi*a/N_m resolution grid
 ALPHA_PANEL = dict(
     sys_name='p10_n7', W=0.55, E_min=0.002, E_max=0.019,
     zoom_window=(-0.04, 0.04),
@@ -134,9 +120,6 @@ PANELS = [
          sys_name='p8_n9', observable='tdos', side='below',
          W_c=6.00, W_lo=3.00, W_hi=6.00, hi_inclusive=True,
          offset='zero', sym=r"\beta_{\rm A}", rho=r"\rho_{\rm t}(0)",
-         # W = 6.00 sits at delta_A = 0 and drops out of the power-law fit;
-         # the essential scan is held to the same 11 points so that the two
-         # sigma_res are comparable.
          ess_grid=(6.05, 20.00, 0.05), ess_window=(3.00, 5.75)),
 ]
 
@@ -235,10 +218,7 @@ def _three_ticks(lo, hi, fmt=None):
 
 def _set_axes(ax, name, xlim=None, ylim=None):
     """
-    Apply the limits for figure `name`: whatever AXES specifies, else the
-    defaults passed in by the plotting function.  Wherever a range is set,
-    exactly three ticks are placed, at both ends and the midpoint.
-    Call this BEFORE drawing the fit line so the fit spans the final frame.
+    Apply the limits for figure `name`
     """
     override = AXES.get(name, {})
     xr = override.get('xlim') or xlim
@@ -471,7 +451,7 @@ def panel_essential(panel, fit):
 
 
 # ===========================================================================
-# Driver
+# Main Runner
 # ===========================================================================
 
 def main():
