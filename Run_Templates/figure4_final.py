@@ -1,8 +1,7 @@
 """
 figure4_final.py
 ================
-Final, cleaned-up Fig. 4 panels.  One script, twelve figures, the exact
-parameters agreed with Bitan and nothing else.
+Final, cleaned-up Fig. 4 panels. 
 
     4(a)   alpha_a  from rho_a(E) ~ |E|^alpha       W = 0.55
     4(b)   beta_a   from rho_a(0) ~ delta^beta      W_c1 = 0.55
