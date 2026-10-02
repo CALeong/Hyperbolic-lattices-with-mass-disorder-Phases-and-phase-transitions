@@ -822,29 +822,7 @@ def plot_anderson_scaling_p8(sys_name, cfg):
         print(f"[{sys_name}] Panel D failed: {e}")
 
 """
-==============================================================================
 SUPPLEMENTARY FIGURE: single-site (generation-resolved) TDOS near E = 0
-==============================================================================
-Main-text procedure : for each plaquette/generation we geometric-average the
-                      LDOS over all sites in that generation AND over all
-                      disorder configurations, then arithmetic-average over
-                      generations -> one rho_t(E).
-
-Supplementary       : identical, except we do NOT average over the sites of a
-                      generation. We pick ONE representative site per
-                      generation and geometric-average over disorder
-                      configurations only:
-
-                          rho_t^(i)(E) = exp[ < ln rho_i(E) >_disorder ]
-
-                      giving one curve per selected site.
-
-Site selection (see SUPP_SITE_INDICES): the LDOS array is ordered in
-contiguous blocks of one generation each, so index 0 is the first site of
-generation 0, index 10 (p10) / 8 (p8) the first site of generation 1, etc.
-The outermost generation contributes TWO sites -- one with coordination
-number z = 2 and one with z = 3 -- hence 8 curves for {10,3} n=7 and 10
-curves for {8,3} n=9.
 """
 
 SUPP_SITE_INDICES = {
@@ -875,8 +853,6 @@ def get_sitewise_tdos_data(sys_name, cfg, num_points=101):
     Returns {wm: {'energies': (n_E,), 'vals': (n_sites, n_E),
                   'site_indices': (n_sites,)}}
 
-    Cached in its own namespace so it cannot collide with the main-text
-    energy-resolved cache.
     """
     cache_dir = os.path.join(CACHE_BASE, sys_name, "TDOS_sitewise_vs_E")
     os.makedirs(cache_dir, exist_ok=True)
@@ -940,14 +916,7 @@ def get_sitewise_tdos_data(sys_name, cfg, num_points=101):
 
 
 def plot_sitewise_tdos(sys_name, cfg, log_y=False):
-    """
-    Supplementary figure, analogous to Supp. Figs. 3-4 of the Dan & Roy
-    preprint: ONE PANEL PER SITE (generation n, coordination number q), with
-    every disorder strength in SUPP_WEIGHTS superimposed inside that panel.
 
-    Each panel is saved as its own file (one fixed 6x6 box, as with the
-    scaling panels) so they can be tiled in the manuscript.
-    """
     data_all = get_sitewise_tdos_data(sys_name, cfg)
     if not data_all:
         print(f"[{sys_name}] No site-resolved data found; skipping supplementary figure.")
@@ -1072,9 +1041,7 @@ def testing_new_fits(sys_name, cfg):
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
 
-    # ---------------------------------------------------------
     # FIT A: Linearized ADOS Scaling (Semimetal-Metal)
-    # ---------------------------------------------------------
     W_c1 = 0.60
     if W_c1 in w_vals_a:
         # 1. Isolate the critical region
@@ -1102,22 +1069,17 @@ def testing_new_fits(sys_name, cfg):
         ax1.set_title(rf"Linearized ADOS ($\beta \approx {beta:.2f}$)")
         ax1.grid(True, linestyle='--', alpha=0.6)
 
-    # ---------------------------------------------------------
     # FIT B: Essential Singularity TDOS (Anderson Transition)
-    # ---------------------------------------------------------
     W_c2 = 7.00 if sys_name == 'p10_n7' else 6.00
 
-    # 1. Isolate the metallic approach to the transition
     mask_t = (w_vals_t < W_c2) & (w_vals_t >= 4.0)
     delta_t = (W_c2 - w_vals_t[mask_t]) / W_c2
     rho_t = tdos_data[mask_t]
 
-    # 2. Transform the variables for an essential singularity
     # rho = A * exp(-c * delta^{-1/2})  =>  ln(rho) = ln(A) - c * delta^{-1/2}
     x_ess = delta_t ** (-0.5)
     y_ess = np.log(rho_t)
 
-    # 3. Fit a simple line to the transformed data to check linearity
     valid_t = (rho_t > 0)
     popt_t, _ = curve_fit(lambda x, m, c: m * x + c, x_ess[valid_t], y_ess[valid_t])
     slope_c = -popt_t[0]
