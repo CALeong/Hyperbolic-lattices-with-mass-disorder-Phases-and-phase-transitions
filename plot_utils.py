@@ -16,24 +16,16 @@ Usage:
     fig, (ax1, ax2) = fixed_box_row(n=2, box_size=6.0, gap=0.05)
     ax1.plot(...); ax2.plot(...)
     fig.savefig(...)
-
-Import this module *instead of* calling plt.figure()/plt.subplots() in your
-plotting functions whenever you want a constant box size. It disables
-constrained_layout globally on import so you never need to fight it per-figure.
 """
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import Divider, Size
 
-# Kill constrained_layout globally, once, on import. This is what was causing
-# the "no gridspecs with layoutgrids" warning — constrained_layout was still
-# active at the rcParams level even though individual figures tried to opt out
-# after creation. Doing it here means no plotting function needs to touch it.
 mpl.rcParams['figure.constrained_layout.use'] = False
 
 
-BOX_SIZE = 6.0  # the one constant: every plot's main box is 6x6 inches
+BOX_SIZE = 6.0  #every plot's main box is 6x6 inches
 
 
 def fixed_box_figure(left=1.2, right=1.0, bottom=1.0, top=1.0, box_size=BOX_SIZE):
@@ -68,7 +60,7 @@ def fixed_box_row(n=2, width_ratios=None, gap=0.05, left=1.2, right=1.0,
     matching your original `width_ratios=[1,1]` broken-axis setup.
 
     width_ratios: relative widths of the panels, e.g. [1, 1] for an even
-    split (default) or [2, 1] if one side should be wider.
+    split (default) 
     gap: room between panels, in inches -- just enough for the diagonal
     slash marks, not extra plot area.
 
