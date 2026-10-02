@@ -1,0 +1,48 @@
+In this folder are python scripts that describe the general way of using the provided code to do the
+KPM computations for the mass and bond disorder in parallel (ie each disorder realization running as its own process)
+
+########################################################################################################################
+
+Description of variables (For KPM_run_*.py scripts):
+
+pval = the p that appears in the Schlafli symbol (here q=3 always)
+nval = number of generations of hyperbolic lattice
+(Important note: in the code the center plaquette generation is labelled 1 however in the papers we have put out
+the convention is different, with the center plaquette generation being labelled as 0)
+
+number_parallel_jobs = number of processes to run in parallel at a time
+clean_hamiltonian = pristine, with no disorder {pval, 3} hyperbolic Dirac lattice hamiltonian
+Wx_list (with x = m or b) = list of disorder strengths for the mass (x=m) or bond (x=b) disorder
+num_moments = number of Chebyshev moments to compute up to
+num_random_vectors = how many random vectors to use to do stochastic trace evaluation (basically always 12)
+random_vector_dim = dimension of random vectors (set equal to number of sites)
+
+eigenspectrum_min/max = the minimum and maximum bounds of the eigenspectrum
+(if chosen poorly ie not enclosing whole spectrum then as job runs you will notice warnings in your terminal output)
+
+save_directory = path to the directory where you want results to be saved into
+save_name = a name for the saved files with the results
+save_name_index_list = just a range of numbers, which are appended to end of save_name
+(Because parallel jobs run and save to same directory, we need save_name_index_list to differentiate
+save files and thus avoid overwriting)
+
+rng_seeds = seed values which will define the rng for drawing the mass or band disorder
+(Be sure for different runs to feed a different original_seed value in the run script)
+
+########################################################################################################################
+
+Description of variables (For Produce_ADOS_from_moments.py script):
+
+data_directory = directory where moments data from KPM run are saved (the "save_directory" path in the run script)
+data_name_template = name of the data files (change first part to the "save_name" string from run script
+but keep '_{}' unchanged)
+data_indices = list of all unique indices appended to end of file names (the "save_name_index_list" from run script)
+
+energy_values = the energy values to sample when reproducing the ADOS from the moments
+eigenspectrum_min/max = the eigenspectrum bounds specified in the run script (variables of same name in run script)
+
+
+
+
+
+
